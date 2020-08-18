@@ -1,0 +1,22 @@
+sudo:required
+services:
+  - docker
+
+before_install:
+  - docker build -t doctoroak/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true doctoroak/react-test npm test
+
+after_success:
+  - docker build -t doctoroak/multi-client ./client
+  - docker build -t doctoroak/multi-nginx ./nginx
+  - docker build -t doctoroak/multi-server ./server
+  - docker build -t doctoroak/multi-worker ./worker
+  # Log into Docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Push images to Docker Hub
+  - docker push doctoroak/multi-client
+  - docker push doctoroak/multi-nginx
+  - docker push doctoroak/multi-server
+  - docker push doctoroak/multi-worker
