@@ -21,3 +21,15 @@ after_success:
   - docker push doctoroak/multi-nginx
   - docker push doctoroak/multi-server
   - docker push doctoroak/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: "eu-west-2"
+  app: "multi-docker"
+  env: "MultiDocker-env"
+  bucket_name: "elasticbeanstalk-eu-west-2-367992499476"
+  bucket_path: "multi-docker"
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
+  on:
+    branch: master
